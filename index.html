@@ -202,9 +202,10 @@
        
   <h2 id="adapterPosition总是返回-1"><a href="#adapterPosition总是返回-1" class="headerlink" title="adapterPosition总是返回-1"></a>adapterPosition总是返回-1</h2><pre><code>Process: com.example.recyclerviewtest, PID: 14661
 java.lang.ArrayIndexOutOfBoundsException: length=22; index=-1
-</code></pre>
-<p>看到这就知道是数组越界了，再看我的代码部分</p>
-<pre><code>override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder &#123;
+
+看到这就知道是数组越界了，再看我的代码部分
+
+override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder &#123;
     val view = LayoutInflater.from(parent.context).inflate(R.layout.fruit_item, parent, false)
     val viewHolder = ViewHolder(view)
     viewHolder.itemView.setOnClickListener &#123;
