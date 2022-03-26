@@ -173,7 +173,7 @@
     
     
     <article
-  id="post-Android_Counter_up"
+  id="post-RecyclerView"
   class="article article-type-post"
   itemscope
   itemprop="blogPost"
@@ -182,229 +182,49 @@
   <div class="article-inner">
      
     <div class="article-meta">
-      <a href="/2022/03/15/Android_Counter_up/" class="article-date">
-  <time datetime="2022-03-15T01:38:52.342Z" itemprop="datePublished">2022-03-15</time>
+      <a href="/2022/03/26/RecyclerView/" class="article-date">
+  <time datetime="2022-03-26T01:22:32.927Z" itemprop="datePublished">2022-03-26</time>
 </a>    
     </div>
       
     <div class="article-entry" itemprop="articleBody">
        
-   
-      <!-- reward -->
-      
-    </div>
-    
-
-    <!-- copyright -->
-    
-    <footer class="article-footer">
-       
-    </footer>
-  </div>
-
-    
+  <p>#adapterPosition总是返回-1</p>
+<pre><code>Process: com.example.recyclerviewtest, PID: 14661
+java.lang.ArrayIndexOutOfBoundsException: length=22; index=-1
+</code></pre>
+<p>看到这就知道是数组越界了，再看我的代码部分</p>
+<pre><code>override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder &#123;
+    val view = LayoutInflater.from(parent.context).inflate(R.layout.fruit_item, parent, false)
+    val viewHolder = ViewHolder(view)
+    viewHolder.itemView.setOnClickListener &#123;
+        val position = viewHolder.adapterPosition
+        val fruit = fruitList[position]
+        Toast.makeText(parent.context,&quot;you clicked view $&#123;fruit.name&#125;&quot;,Toast.LENGTH_SHORT).show()
+    &#125;
+    Log.d(TAG,viewHolder.toString()+&quot;firstCreated&quot;)
+    return ViewHolder((view))
+&#125;
+</code></pre>
+<p>很明显是一下这两行引起报错</p>
+<pre><code>val position = viewHolder.adapterPosition
+val fruit = fruitList[position]     
+</code></pre>
+<p>但真正的原因其实是这行<br>    <code>return ViewHolder((view))</code><br>我原本是想返回刚才设置监听的那个viewHolder，结果这里打错了，返回的是一个新的ViewHolder。</p>
+<p>于是我就去网上搜，为什么adapterPosition返回-1<br>找到的99%的文章都是说因为在刷新的时候，数据绑定和实际视图显示是存在16ms的误差，所有有极小概率会导致这种现象。<br>viewHolder在还没有绑定数据的时候，position就是-1。</p>
+<p>为了测试，我们可以打两个logcat来看<br>在onCreatedViewHolder中加上这行<br><code>Log.d(TAG,viewHolder.toString()+&quot;waitingForBounding&quot;)</code></p>
+<p>onBindViewHolder中加上这行<br><code>Log.d(TAG,holder.toString()+&quot;hasBounded&quot;)</code></p>
+<p>结果是：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">D/FruitAdapter: ViewHolder&#123;291904 position=-1 id=-1, oldPos=-1, pLpos:-1 unbound no parent&#125;waitingForBounding</span><br><span class="line">D/FruitAdapter: ViewHolder&#123;4370eed position=0 id=-1, oldPos=-1, pLpos:-1 no parent&#125;</span><br><span class="line">hasBounded</span><br><span class="line">D/FruitAdapter: ViewHolder&#123;965c7b3 position=-1 id=-1, oldPos=-1, pLpos:-1 unbound no parent&#125;waitingForBounding</span><br><span class="line">D/FruitAdapter: ViewHolder&#123;aa0c170 position=1 id=-1, oldPos=-1, pLpos:-1 no parent&#125;</span><br><span class="line">hasBounded</span><br><span class="line">...</span><br></pre></td></tr></table></figure>
+<p>结果证明，还没有绑定的position都是-1<br>而之前那个设置监听的ViewHolder并没有绑定数据，所以position = -1</p>
+<p>所以每次点击item的时候，就会报错。</p>
+<p>有意思的是，用打Log的方法，我们也可以验证ViewHolder的复用</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">2022-03-26 08:52:52.345 24123-24123/com.example.recyclerviewtest D/FruitAdapter: ViewHolder&#123;291904 position=-1 id=-1, oldPos=-1, pLpos:-1 unbound no parent&#125;waitingForBounding</span><br><span class="line">2022-03-26 08:52:52.346 24123-24123/com.example.recyclerviewtest D/FruitAdapter: ViewHolder&#123;291904 position=0 id=-1, oldPos=-1, pLpos:-1 no parent&#125;hasBounded</span><br><span class="line">2022-03-26 08:52:56.670 24123-24123/com.example.recyclerviewtest D/FruitAdapter: ViewHolder&#123;291904 position=0 id=-1, oldPos=-1, pLpos:-1&#125;CLICKDDDDDD</span><br><span class="line">2022-03-26 08:52:58.999 24123-24123/com.example.recyclerviewtest D/FruitAdapter: ViewHolder&#123;291904 position=18 id=-1, oldPos=-1, pLpos:-1 no parent&#125;hasBounded</span><br><span class="line">2022-03-26 08:52:59.508 24123-24123/com.example.recyclerviewtest D/FruitAdapter: ViewHolder&#123;291904 position=42 id=-1, oldPos=-1, pLpos:-1 no parent&#125;hasBounded</span><br></pre></td></tr></table></figure>
+<p>同一个ViewHolder绑定了三次数据，出现在三个position上<br>这里的291904 ViewHolder是一开始加载出来的最左上角的ViewHolder，但是我滑到最下面，再滑回去点击最左上角那个，发现此时已经不是它了。</p>
+<p>我还有疑问：<br>为什么我点击某一个item的时候，触发的是设置了监听的viewHolder，而不是绑定了数据的呢?还是都点击了？</p>
+<p>于是我又把绑定数据的VH设置了监听，结果证明，没有绑定数据的VH监听失效了，所以是只触发了后绑定的监听。<br>所以我们可以得出结论，同一个item是可以有两个ViewHolder的。<br>正如上面那样，一个用来设置监听，一个用来绑定数据，但是没有绑定数据的VH，不知道自己position,position=-1.</p>
+<p>总结：<br>1、设置监听到onBindViewHolder里面去设置。<br>2、没有绑定的VH的position=-1<br>3、两个ViewHolder可以占用屏幕同一块区域</p>
  
-    
-</article>
-
-    
-    <article
-  id="post-test"
-  class="article article-type-post"
-  itemscope
-  itemprop="blogPost"
-  data-scroll-reveal
->
-  <div class="article-inner">
-    
-    <header class="article-header">
-       
-<h2 itemprop="name">
-  <a class="article-title" href="/2022/01/27/test/"
-    >test</a> 
-</h2>
- 
-
-      
-    </header>
-     
-    <div class="article-meta">
-      <a href="/2022/01/27/test/" class="article-date">
-  <time datetime="2022-01-26T17:01:09.000Z" itemprop="datePublished">2022-01-27</time>
-</a>    
-    </div>
-      
-    <div class="article-entry" itemprop="articleBody">
-       
-   
-      <!-- reward -->
-      
-    </div>
-    
-
-    <!-- copyright -->
-    
-    <footer class="article-footer">
-       
-    </footer>
-  </div>
-
-    
- 
-    
-</article>
-
-    
-    <article
-  id="post-Ethan-s-blog"
-  class="article article-type-post"
-  itemscope
-  itemprop="blogPost"
-  data-scroll-reveal
->
-  <div class="article-inner">
-    
-    <header class="article-header">
-       
-<h2 itemprop="name">
-  <a class="article-title" href="/2022/01/26/Ethan-s-blog/"
-    >Ethan&#39;s blog</a> 
-</h2>
- 
-
-      
-    </header>
-     
-    <div class="article-meta">
-      <a href="/2022/01/26/Ethan-s-blog/" class="article-date">
-  <time datetime="2022-01-26T09:28:23.000Z" itemprop="datePublished">2022-01-26</time>
-</a>    
-    </div>
-      
-    <div class="article-entry" itemprop="articleBody">
-       
-   
-      <!-- reward -->
-      
-    </div>
-    
-
-    <!-- copyright -->
-    
-    <footer class="article-footer">
-       
-    </footer>
-  </div>
-
-    
- 
-    
-</article>
-
-    
-    <article
-  id="post-hello-world"
-  class="article article-type-post"
-  itemscope
-  itemprop="blogPost"
-  data-scroll-reveal
->
-  <div class="article-inner">
-    
-    <header class="article-header">
-       
-<h2 itemprop="name">
-  <a class="article-title" href="/2022/01/26/hello-world/"
-    >Hello World</a> 
-</h2>
- 
-
-      
-    </header>
-     
-    <div class="article-meta">
-      <a href="/2022/01/26/hello-world/" class="article-date">
-  <time datetime="2022-01-26T09:26:12.527Z" itemprop="datePublished">2022-01-26</time>
-</a>    
-    </div>
-      
-    <div class="article-entry" itemprop="articleBody">
-       
-  <p>Welcome to <a target="_blank" rel="noopener" href="https://hexo.io/">Hexo</a>! This is your very first post. Check <a target="_blank" rel="noopener" href="https://hexo.io/docs/">documentation</a> for more info. If you get any problems when using Hexo, you can find the answer in <a target="_blank" rel="noopener" href="https://hexo.io/docs/troubleshooting.html">troubleshooting</a> or you can ask me on <a target="_blank" rel="noopener" href="https://github.com/hexojs/hexo/issues">GitHub</a>.</p>
-<h2 id="Quick-Start"><a href="#Quick-Start" class="headerlink" title="Quick Start"></a>Quick Start</h2><h3 id="Create-a-new-post"><a href="#Create-a-new-post" class="headerlink" title="Create a new post"></a>Create a new post</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo new <span class="string">&quot;My New Post&quot;</span></span><br></pre></td></tr></table></figure>
-
-<p>More info: <a target="_blank" rel="noopener" href="https://hexo.io/docs/writing.html">Writing</a></p>
-<h3 id="Run-server"><a href="#Run-server" class="headerlink" title="Run server"></a>Run server</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo server</span><br></pre></td></tr></table></figure>
-
-<p>More info: <a target="_blank" rel="noopener" href="https://hexo.io/docs/server.html">Server</a></p>
-<h3 id="Generate-static-files"><a href="#Generate-static-files" class="headerlink" title="Generate static files"></a>Generate static files</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo generate</span><br></pre></td></tr></table></figure>
-
-<p>More info: <a target="_blank" rel="noopener" href="https://hexo.io/docs/generating.html">Generating</a></p>
-<h3 id="Deploy-to-remote-sites"><a href="#Deploy-to-remote-sites" class="headerlink" title="Deploy to remote sites"></a>Deploy to remote sites</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo deploy</span><br></pre></td></tr></table></figure>
-
-<p>More info: <a target="_blank" rel="noopener" href="https://hexo.io/docs/one-command-deployment.html">Deployment</a></p>
- 
-      <!-- reward -->
-      
-    </div>
-    
-
-    <!-- copyright -->
-    
-    <footer class="article-footer">
-       
-    </footer>
-  </div>
-
-    
- 
-    
-</article>
-
-    
-    <article
-  id="post-2022-01-18-脑机接口与混合智能-脑机接口（BCI）常用的实验范式"
-  class="article article-type-post"
-  itemscope
-  itemprop="blogPost"
-  data-scroll-reveal
->
-  <div class="article-inner">
-    
-    <header class="article-header">
-       
-<h2 itemprop="name">
-  <a class="article-title" href="/2022/01/18/2022-01-18-%E8%84%91%E6%9C%BA%E6%8E%A5%E5%8F%A3%E4%B8%8E%E6%B7%B7%E5%90%88%E6%99%BA%E8%83%BD-%E8%84%91%E6%9C%BA%E6%8E%A5%E5%8F%A3%EF%BC%88BCI%EF%BC%89%E5%B8%B8%E7%94%A8%E7%9A%84%E5%AE%9E%E9%AA%8C%E8%8C%83%E5%BC%8F/"
-    >脑机接口与混合智能-脑机接口（BCI）常用的实验范式</a> 
-</h2>
- 
-
-      
-    </header>
-     
-    <div class="article-meta">
-      <a href="/2022/01/18/2022-01-18-%E8%84%91%E6%9C%BA%E6%8E%A5%E5%8F%A3%E4%B8%8E%E6%B7%B7%E5%90%88%E6%99%BA%E8%83%BD-%E8%84%91%E6%9C%BA%E6%8E%A5%E5%8F%A3%EF%BC%88BCI%EF%BC%89%E5%B8%B8%E7%94%A8%E7%9A%84%E5%AE%9E%E9%AA%8C%E8%8C%83%E5%BC%8F/" class="article-date">
-  <time datetime="2022-01-18T15:21:51.000Z" itemprop="datePublished">2022-01-18</time>
-</a> 
-  <div class="article-category">
-    <a class="article-category-link" href="/categories/%E2%AD%90%E8%AF%BB%E7%A0%94%E5%AD%A6%E4%B9%A0/">⭐读研学习</a> / <a class="article-category-link" href="/categories/%E2%AD%90%E8%AF%BB%E7%A0%94%E5%AD%A6%E4%B9%A0/%E8%84%91%E6%9C%BA%E6%8E%A5%E5%8F%A3%E4%B8%8E%E6%B7%B7%E5%90%88%E6%99%BA%E8%83%BD/">脑机接口与混合智能</a>
-  </div>
-   
-    </div>
-      
-    <div class="article-entry" itemprop="articleBody">
-       
-  <p>脑机接口(Brain Computer Interface，BCI)，或称大脑端口(Direct neural interface)、脑机融合感知(Brain-machine interface)，是指在人或动物脑（或者脑细胞的培养物）与外部设备间建立的直接连接通路。在单向脑机接口的情况下，计算机接受脑传来的命令或者发送信号到脑，但不能同时发送和接收信号。而双向脑机接口允许脑和外部设备间的双向信息交换。</p>
-<p>BCI 系统通过对脑电信号的分析和处理，提供用户与外界设备通信和控制的信道，是一种新的人机交互方式。BCI 系统涉及计算机通信与控制、生物医学工程和康复医学等领域，己经成为交叉学科的热点。而基于脑电信号(Electroencephalography，EEG)的脑机接口成为了目前非常实用、先进的脑机接口方式，以揭示和验证大脑神经生理机制，脑认知科学和神经信息等相关内容。</p>
-<p>BCI 系统的信号处理过程包括信号获取、特征提取、分类判断等，其中特征提取和分类判断是 BCI 信号处理的关键环节。传统脑电信号的处理方法是对信号进行多次检测并进行均值滤波，再用统计学方法寻找 EEG 的变化规律。但是该方法信息传输率较低，不能满足实时控制的要求。目前普遍采用的是先对离线 EEG 信号进行处理和分析，再进行在线调试。</p>
-<p>BCI 系统的信号处理过程</p>
-
-
-<p><strong>这里将介绍目前比较常用的脑机接口范式：运动想象BCI、SSVEP、AEP、P300</strong></p> 
-      <a class="article-more-link" href="/2022/01/18/2022-01-18-%E8%84%91%E6%9C%BA%E6%8E%A5%E5%8F%A3%E4%B8%8E%E6%B7%B7%E5%90%88%E6%99%BA%E8%83%BD-%E8%84%91%E6%9C%BA%E6%8E%A5%E5%8F%A3%EF%BC%88BCI%EF%BC%89%E5%B8%B8%E7%94%A8%E7%9A%84%E5%AE%9E%E9%AA%8C%E8%8C%83%E5%BC%8F/"
-        >阅读更多...</a
-      >
-       
       <!-- reward -->
       
     </div>

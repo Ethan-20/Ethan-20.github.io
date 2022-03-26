@@ -13,7 +13,7 @@
         name="viewport"
         content="width=device-width, initial-scale=1, maximum-scale=1"
       />
-      <title>⭐读研学习 |  Ethan&#39;s blog</title>
+      <title> Ethan&#39;s blog</title>
   <meta name="generator" content="hexo-theme-ayer">
       
       <link rel="shortcut icon" href="/favicon.ico" />
@@ -55,74 +55,183 @@
       
     <main class="content on">
       <section class="outer">
-  
-  <ul class="ads">
-    
-        <li>
-            <a target="_blank" rel="noopener" href="https://curl.qcloud.com/kvO7hb43">
-                <img src="https://cdn.jsdelivr.net/gh/Shen-Yu/cdn/img/ten_1.jpg" width="300" alt="云服务器限时秒杀">
-            </a>
-        </li>
-    
-        <li>
-            <a target="_blank" rel="noopener" href="https://www.vultr.com/?ref=8630075">
-                <img src="https://cdn.jsdelivr.net/gh/Shen-Yu/cdn/img/vultr.png" width="300" alt="vultr优惠vps">
-            </a>
-        </li>
-    
-</ul>
-  
-  
-  <article class="articles">
-    
-    
-    <h1 class="page-type-title">⭐读研学习</h1>
-    
-    
-  
-  
-  
-  
-  
-  
-  <div class="archives-wrap">
-    <div class="archive-year-wrap">
-      <a href="/archives/2022" class="archive-year">2022</a>
-    </div>
-    <div class="archives">
-      
-      <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      <a href="/2022/01/18/2022-01-18-%E8%84%91%E6%9C%BA%E6%8E%A5%E5%8F%A3%E4%B8%8E%E6%B7%B7%E5%90%88%E6%99%BA%E8%83%BD-%E8%84%91%E6%9C%BA%E6%8E%A5%E5%8F%A3%EF%BC%88BCI%EF%BC%89%E5%B8%B8%E7%94%A8%E7%9A%84%E5%AE%9E%E9%AA%8C%E8%8C%83%E5%BC%8F/" class="archive-article-date">
-  <time datetime="2022-01-18T15:21:51.000Z" itemprop="datePublished">01/18</time>
-</a>
+  <article
+  id="page-"
+  class="article article-type-page"
+  itemscope
+  itemprop="blogPost"
+  data-scroll-reveal
+>
+  <div class="article-inner">
        
-<h2 itemprop="name">
-  <a class="archive-article-title" href="/2022/01/18/2022-01-18-%E8%84%91%E6%9C%BA%E6%8E%A5%E5%8F%A3%E4%B8%8E%E6%B7%B7%E5%90%88%E6%99%BA%E8%83%BD-%E8%84%91%E6%9C%BA%E6%8E%A5%E5%8F%A3%EF%BC%88BCI%EF%BC%89%E5%B8%B8%E7%94%A8%E7%9A%84%E5%AE%9E%E9%AA%8C%E8%8C%83%E5%BC%8F/"
-    >脑机接口与混合智能-脑机接口（BCI）常用的实验范式</a> 
-</h2>
+    <div class="article-entry" itemprop="articleBody">
+       
+  <p>#adapterPosition总是返回-1</p>
+<pre><code>Process: com.example.recyclerviewtest, PID: 14661
+java.lang.ArrayIndexOutOfBoundsException: length=22; index=-1
+</code></pre>
+<p>看到这就知道是数组越界了，再看我的代码部分</p>
+<pre><code>override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder &#123;
+    val view = LayoutInflater.from(parent.context).inflate(R.layout.fruit_item, parent, false)
+    val viewHolder = ViewHolder(view)
+    viewHolder.itemView.setOnClickListener &#123;
+        val position = viewHolder.adapterPosition
+        val fruit = fruitList[position]
+        Toast.makeText(parent.context,&quot;you clicked view $&#123;fruit.name&#125;&quot;,Toast.LENGTH_SHORT).show()
+    &#125;
+    Log.d(TAG,viewHolder.toString()+&quot;firstCreated&quot;)
+    return ViewHolder((view))
+&#125;
+</code></pre>
+<p>很明显是一下这两行引起报错</p>
+<pre><code>val position = viewHolder.adapterPosition
+val fruit = fruitList[position]     
+</code></pre>
+<p>但真正的原因其实是这行<br>    <code>return ViewHolder((view))</code><br>我原本是想返回刚才设置监听的那个viewHolder，结果这里打错了，返回的是一个新的ViewHolder。</p>
+<p>于是我就去网上搜，为什么adapterPosition返回-1<br>找到的99%的文章都是说因为在刷新的时候，数据绑定和实际视图显示是存在16ms的误差，所有有极小概率会导致这种现象。<br>viewHolder在还没有绑定数据的时候，position就是-1。</p>
+<p>为了测试，我们可以打两个logcat来看<br>在onCreatedViewHolder中加上这行<br><code>Log.d(TAG,viewHolder.toString()+&quot;waitingForBounding&quot;)</code></p>
+<p>onBindViewHolder中加上这行<br><code>Log.d(TAG,holder.toString()+&quot;hasBounded&quot;)</code></p>
+<p>结果是：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">D/FruitAdapter: ViewHolder&#123;291904 position=-1 id=-1, oldPos=-1, pLpos:-1 unbound no parent&#125;waitingForBounding</span><br><span class="line">D/FruitAdapter: ViewHolder&#123;4370eed position=0 id=-1, oldPos=-1, pLpos:-1 no parent&#125;</span><br><span class="line">hasBounded</span><br><span class="line">D/FruitAdapter: ViewHolder&#123;965c7b3 position=-1 id=-1, oldPos=-1, pLpos:-1 unbound no parent&#125;waitingForBounding</span><br><span class="line">D/FruitAdapter: ViewHolder&#123;aa0c170 position=1 id=-1, oldPos=-1, pLpos:-1 no parent&#125;</span><br><span class="line">hasBounded</span><br><span class="line">...</span><br></pre></td></tr></table></figure>
+<p>结果证明，还没有绑定的position都是-1<br>而之前那个设置监听的ViewHolder并没有绑定数据，所以position = -1</p>
+<p>所以每次点击item的时候，就会报错。</p>
+<p>有意思的是，用打Log的方法，我们也可以验证ViewHolder的复用</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">2022-03-26 08:52:52.345 24123-24123/com.example.recyclerviewtest D/FruitAdapter: ViewHolder&#123;291904 position=-1 id=-1, oldPos=-1, pLpos:-1 unbound no parent&#125;waitingForBounding</span><br><span class="line">2022-03-26 08:52:52.346 24123-24123/com.example.recyclerviewtest D/FruitAdapter: ViewHolder&#123;291904 position=0 id=-1, oldPos=-1, pLpos:-1 no parent&#125;hasBounded</span><br><span class="line">2022-03-26 08:52:56.670 24123-24123/com.example.recyclerviewtest D/FruitAdapter: ViewHolder&#123;291904 position=0 id=-1, oldPos=-1, pLpos:-1&#125;CLICKDDDDDD</span><br><span class="line">2022-03-26 08:52:58.999 24123-24123/com.example.recyclerviewtest D/FruitAdapter: ViewHolder&#123;291904 position=18 id=-1, oldPos=-1, pLpos:-1 no parent&#125;hasBounded</span><br><span class="line">2022-03-26 08:52:59.508 24123-24123/com.example.recyclerviewtest D/FruitAdapter: ViewHolder&#123;291904 position=42 id=-1, oldPos=-1, pLpos:-1 no parent&#125;hasBounded</span><br></pre></td></tr></table></figure>
+<p>同一个ViewHolder绑定了三次数据，出现在三个position上<br>这里的291904 ViewHolder是一开始加载出来的最左上角的ViewHolder，但是我滑到最下面，再滑回去点击最左上角那个，发现此时已经不是它了。</p>
+<p>我还有疑问：<br>为什么我点击某一个item的时候，触发的是设置了监听的viewHolder，而不是绑定了数据的呢?还是都点击了？</p>
+<p>于是我又把绑定数据的VH设置了监听，结果证明，没有绑定数据的VH监听失效了，所以是只触发了后绑定的监听。<br>所以我们可以得出结论，同一个item是可以有两个ViewHolder的。<br>正如上面那样，一个用来设置监听，一个用来绑定数据，但是没有绑定数据的VH，不知道自己position,position=-1.</p>
+<p>总结：<br>1、设置监听到onBindViewHolder里面去设置。<br>2、没有绑定的VH的position=-1<br>3、两个ViewHolder可以占用屏幕同一块区域</p>
  
-
-    </header>
-    
+      <!-- reward -->
       
-  <div class="article-category">
-    <a class="article-category-link" href="/categories/%E2%AD%90%E8%AF%BB%E7%A0%94%E5%AD%A6%E4%B9%A0/">⭐读研学习</a> / <a class="article-category-link" href="/categories/%E2%AD%90%E8%AF%BB%E7%A0%94%E5%AD%A6%E4%B9%A0/%E8%84%91%E6%9C%BA%E6%8E%A5%E5%8F%A3%E4%B8%8E%E6%B7%B7%E5%90%88%E6%99%BA%E8%83%BD/">脑机接口与混合智能</a>
-  </div>
-
-    
-    
-  </div>
-</article>
-      
+      <div id="reword-out">
+        <div id="reward-btn">
+          Donate
+        </div>
+      </div>
       
     </div>
-  </div>
-  
-  
+    
 
-  
+    <!-- copyright -->
+    
+    <div class="declare">
+      <ul class="post-copyright">
+        <li>
+          <i class="ri-copyright-line"></i>
+          <strong>Copyright： </strong>
+          
+          Copyright is owned by the author. For commercial reprints, please contact the author for authorization. For non-commercial reprints, please indicate the source.
+          
+        </li>
+      </ul>
+    </div>
+    
+    <footer class="article-footer">
+       
+<div class="share-btn">
+      <span class="share-sns share-outer">
+        <i class="ri-share-forward-line"></i>
+        分享
+      </span>
+      <div class="share-wrap">
+        <i class="arrow"></i>
+        <div class="share-icons">
+          
+          <a class="weibo share-sns" href="javascript:;" data-type="weibo">
+            <i class="ri-weibo-fill"></i>
+          </a>
+          <a class="weixin share-sns wxFab" href="javascript:;" data-type="weixin">
+            <i class="ri-wechat-fill"></i>
+          </a>
+          <a class="qq share-sns" href="javascript:;" data-type="qq">
+            <i class="ri-qq-fill"></i>
+          </a>
+          <a class="douban share-sns" href="javascript:;" data-type="douban">
+            <i class="ri-douban-line"></i>
+          </a>
+          <!-- <a class="qzone share-sns" href="javascript:;" data-type="qzone">
+            <i class="icon icon-qzone"></i>
+          </a> -->
+          
+          <a class="facebook share-sns" href="javascript:;" data-type="facebook">
+            <i class="ri-facebook-circle-fill"></i>
+          </a>
+          <a class="twitter share-sns" href="javascript:;" data-type="twitter">
+            <i class="ri-twitter-fill"></i>
+          </a>
+          <a class="google share-sns" href="javascript:;" data-type="google">
+            <i class="ri-google-fill"></i>
+          </a>
+        </div>
+      </div>
+</div>
+
+<div class="wx-share-modal">
+    <a class="modal-close" href="javascript:;"><i class="ri-close-circle-line"></i></a>
+    <p>扫一扫，分享到微信</p>
+    <div class="wx-qrcode">
+      <img src="//api.qrserver.com/v1/create-qr-code/?size=150x150&data=http://example.com/RecyclerView.html" alt="微信分享二维码">
+    </div>
+</div>
+
+<div id="share-mask"></div>  
+    </footer>
+  </div>
+
+   
+   
+<!-- valine评论 -->
+<div id="vcomments-box">
+  <div id="vcomments"></div>
+</div>
+<script src="//cdn1.lncld.net/static/js/3.0.4/av-min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/valine@1.4.14/dist/Valine.min.js"></script>
+<script>
+  new Valine({
+    el: "#vcomments",
+    app_id: "",
+    app_key: "",
+    path: window.location.pathname,
+    avatar: "monsterid",
+    placeholder: "给我的文章加点评论吧~",
+    recordIP: true,
+  });
+  const infoEle = document.querySelector("#vcomments .info");
+  if (infoEle && infoEle.childNodes && infoEle.childNodes.length > 0) {
+    infoEle.childNodes.forEach(function (item) {
+      item.parentNode.removeChild(item);
+    });
+  }
+</script>
+<style>
+  #vcomments-box {
+    padding: 5px 30px;
+  }
+
+  @media screen and (max-width: 800px) {
+    #vcomments-box {
+      padding: 5px 0px;
+    }
+  }
+
+  #vcomments-box #vcomments {
+    background-color: #fff;
+  }
+
+  .v .vlist .vcard .vh {
+    padding-right: 20px;
+  }
+
+  .v .vlist .vcard {
+    padding-left: 10px;
+  }
+</style>
+
+ 
+    
+</article>
+
 </section>
       <footer class="footer">
   <div class="outer">
