@@ -13,7 +13,7 @@
         name="viewport"
         content="width=device-width, initial-scale=1, maximum-scale=1"
       />
-      <title>Archives: 2022 |  Ethan&#39;s blog</title>
+      <title>LayoutInflater的使用说明 |  Ethan&#39;s blog</title>
   <meta name="generator" content="hexo-theme-ayer">
       
       <link rel="shortcut icon" href="/favicon.ico" />
@@ -55,94 +55,197 @@
       
     <main class="content on">
       <section class="outer">
-  
-  
-  <article class="articles">
+  <article
+  id="page-"
+  class="article article-type-page"
+  itemscope
+  itemprop="blogPost"
+  data-scroll-reveal
+>
+  <div class="article-inner">
     
-    
-    <h1 class="page-type-title">2022</h1>
-    
-    
-  
-  
-  
-  
-  
-  
-  <div class="archives-wrap">
-    <div class="archive-year-wrap">
-      <a href="/archives/2022" class="archive-year">2022</a>
-    </div>
-    <div class="archives">
-      
-      <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      <a href="/2022/03/30/LayoutInflater/" class="archive-article-date">
-  <time datetime="2022-03-30T08:57:46.688Z" itemprop="datePublished">03/30</time>
-</a>
+    <header class="article-header">
        
-<h2 itemprop="name">
-  <a class="archive-article-title" href="/2022/03/30/LayoutInflater/"
-    >LayoutInflater的使用说明</a> 
-</h2>
+<h1 class="article-title sea-center" style="border-left:0" itemprop="name">
+  LayoutInflater的使用说明
+</h1>
  
 
-    </header>
-    
-    
-  </div>
-</article>
       
-  
-  
-      <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      <a href="/2022/03/26/adapterPosition=-1/" class="archive-article-date">
-  <time datetime="2022-03-26T01:01:09.000Z" itemprop="datePublished">03/26</time>
-</a>
+    </header>
        
-<h2 itemprop="name">
-  <a class="archive-article-title" href="/2022/03/26/adapterPosition=-1/"
-    >dapterPosition总是返回-1</a> 
-</h2>
- 
-
-    </header>
-    
-    
-  </div>
-</article>
-      
-  
-  
-      <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      <a href="/2022/01/27/test/" class="archive-article-date">
-  <time datetime="2022-01-26T17:01:09.000Z" itemprop="datePublished">01/27</time>
-</a>
+    <div class="article-entry" itemprop="articleBody">
        
-<h2 itemprop="name">
-  <a class="archive-article-title" href="/2022/01/27/test/"
-    >test</a> 
-</h2>
- 
+  <h1 id="LayoutInflater的使用"><a href="#LayoutInflater的使用" class="headerlink" title="LayoutInflater的使用"></a>LayoutInflater的使用</h1><h2 id="1、作用"><a href="#1、作用" class="headerlink" title="1、作用"></a>1、作用</h2><p>在实际开发会用到LayoutInflater这个类,它的作用类似于 findViewById()<br>LayoutInflater是用来找layout下xml布局文件，并且实例化，而findViewById()是找具体xml下的具体 widget控件(如:Button,TextView等)<br>对于一个没有被载入或者想要动态加载的界面，都需要使用LayoutInflater.inflate()来载入。</p>
+<p>什么叫做动态加载的界面呢？</p>
+<p>在应用中有时候需要通过某些点击效果动态地添加布局，而不是直接加载完整的xml布局文件，就需要动态载入。</p>
+<h2 id="2、使用场景"><a href="#2、使用场景" class="headerlink" title="2、使用场景"></a>2、使用场景</h2><pre><code>（1）在Activity中
 
-    </header>
-    
-    
-  </div>
-</article>
+    LayoutInflater inflater = getLayoutInflater();
+    View view = inflater.inflate(R.layout.activity_main, null);
+</code></pre>
+<p>（2）在Fragment中</p>
+<pre><code>    View view = inflater.inflate(R.layout.fragment_guide_one, container, false);
+    return view;
+</code></pre>
+<p>（3）在Adapter中</p>
+<pre><code>@Override
+public View getView(int position, View convertView, ViewGroup parent) &#123;
+    View view = LayoutInflater.from(convertView.getContext()).inflate(R.layout.activity_main, parent, false);
+    return view;
+&#125;
+</code></pre>
+<p>LayoutInflater.from()这个方法是官方帮我们封装了一层而已，底层还是调用getSystemService()方法，目的是使LayoutInflater与Context对象相绑定。<br>LayoutInflater.from()的作用是，从给定的上下文中获取 LayoutInflater，有点像this.getLayoutInflater…</p>
+<h2 id="3、inflate的三个参数"><a href="#3、inflate的三个参数" class="headerlink" title="3、inflate的三个参数"></a>3、inflate的三个参数</h2><p>理解inflate的三个参数的作用，就足够我们实际开发了</p>
+<p>inflate方法有三个参数(int resource, ViewGroup root, boolean attachToRoot)。<br>resource：需要加载布局文件的id，意思是需要将这个布局文件中加载到Activity中来操作。</p>
+<p>root：需要附加到resource资源文件的根控件，什么意思呢，就是inflate()会返回一个View对象，如果第三个参数attachToRoot为true，<strong>就将这个root作为根对象返回</strong>，否则仅仅将这个root对象的<strong>LayoutParams属性附加</strong>到resource对象的根布局对象上，也就是布局文件resource的最外层的View上，比如是一个LinearLayout或者其它的Layout对象。</p>
+<p>attachToRoot：是否将root附加到布局文件的根视图上</p>
+<p>第一个参数应该不难理解，就是需要动态加载进来的小布局对应的资源文件。</p>
+<p>第二第三个参数也许不好理解</p>
+<p>先看看郭霖大神的总结：</p>
+<ol>
+<li>如果root为null，attachToRoot将失去作用，设置任何值都没有意义，布局的根布局的属性无效。</li>
+<li>如果root不为null，attachToRoot设为true，则会给加载的布局文件的指定一个父布局，即root ，并把view直接添加到父布局中。返回值是父布局。</li>
+<li>如果root不为null，attachToRoot设为false，则会将布局文件最外层的所有layout属性进行设置，当该view被添加到父view当中时，这些layout属性会自动生效。给该View设置一个父View的约束（LayoutParams），然后将其返回。</li>
+<li>在不设置attachToRoot参数的情况下，如果root不为null，attachToRoot参数默认为true。</li>
+</ol>
+<p>如果感觉难懂的话，我们慢慢来看，这里只讲结果， 不讲源码。如果想要阅读源码的建议看这个：<a target="_blank" rel="noopener" href="https://blog.csdn.net/l540675759/article/details/78099609">Android 中LayoutInflater（布局加载器）之源码篇</a></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line">//1、只要root是null,第三个参数就不重要了，无论是什么结果都是一样的</span><br><span class="line">View view = LayoutInflater.from(this).inflate(R.layout.demo_layout,null);</span><br><span class="line">这一步做了一件事，加载R.layout.demo_layout，使之转化为view（此view是该方法的返回值）</span><br><span class="line">若要把该view添加到mViewGroup中，还需调用如下方法</span><br><span class="line">mViewGroup.addView(view);</span><br><span class="line"></span><br><span class="line">//2、root！=null &amp;&amp; attachToRoot == true</span><br><span class="line">LayoutInflater.from(this).inflate(R.layout.demo_layout, mViewGroup,true);</span><br><span class="line">这一步做了两件事</span><br><span class="line">1.加载R.layout.demo_layout，使之转化为view</span><br><span class="line">2.把该view添加到mViewGroup中,注意，这里是直接添加了，在布局上能看到新来的view</span><br><span class="line">该方法的返回值是mViewGroup，此时再addView(view)会报错</span><br><span class="line"></span><br><span class="line">//3、root！=null &amp;&amp; attachToRoot == false </span><br><span class="line">View view = LayoutInflater.from(this).inflate(R.layout.demo_layout, mViewGroup, false);</span><br><span class="line">返回值同inflate(R.layout.demo_layout, null)都是view</span><br><span class="line">不同的是：有root的demo_layout根布局有效，无root的demo_layout根布局无效</span><br><span class="line">一般都用这个</span><br><span class="line"></span><br><span class="line">//4、当没有attachToRoot时，默认为true</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>注意到“不同的是：有root的demo_layout根布局有效，无root的demo_layout根布局无效”这一句，这句是什么意思呢？</p>
+<p>如果一个控件（布局）不依附（attach）在另一个布局里，他的宽高是无效的。也就是说如果想要某个布局的宽高生效，一定有一个比它更大的布局罩着它。</p>
+<p>所以，如果我们想它的根控件生效，又不想让它直接加到父布局里，那就设置attachToRoot为false 即可</p>
+ 
+      <!-- reward -->
       
+      <div id="reword-out">
+        <div id="reward-btn">
+          Donate
+        </div>
+      </div>
       
     </div>
-  </div>
-  
-  
+    
 
-  
+    <!-- copyright -->
+    
+    <div class="declare">
+      <ul class="post-copyright">
+        <li>
+          <i class="ri-copyright-line"></i>
+          <strong>Copyright： </strong>
+          
+          Copyright is owned by the author. For commercial reprints, please contact the author for authorization. For non-commercial reprints, please indicate the source.
+          
+        </li>
+      </ul>
+    </div>
+    
+    <footer class="article-footer">
+       
+<div class="share-btn">
+      <span class="share-sns share-outer">
+        <i class="ri-share-forward-line"></i>
+        分享
+      </span>
+      <div class="share-wrap">
+        <i class="arrow"></i>
+        <div class="share-icons">
+          
+          <a class="weibo share-sns" href="javascript:;" data-type="weibo">
+            <i class="ri-weibo-fill"></i>
+          </a>
+          <a class="weixin share-sns wxFab" href="javascript:;" data-type="weixin">
+            <i class="ri-wechat-fill"></i>
+          </a>
+          <a class="qq share-sns" href="javascript:;" data-type="qq">
+            <i class="ri-qq-fill"></i>
+          </a>
+          <a class="douban share-sns" href="javascript:;" data-type="douban">
+            <i class="ri-douban-line"></i>
+          </a>
+          <!-- <a class="qzone share-sns" href="javascript:;" data-type="qzone">
+            <i class="icon icon-qzone"></i>
+          </a> -->
+          
+          <a class="facebook share-sns" href="javascript:;" data-type="facebook">
+            <i class="ri-facebook-circle-fill"></i>
+          </a>
+          <a class="twitter share-sns" href="javascript:;" data-type="twitter">
+            <i class="ri-twitter-fill"></i>
+          </a>
+          <a class="google share-sns" href="javascript:;" data-type="google">
+            <i class="ri-google-fill"></i>
+          </a>
+        </div>
+      </div>
+</div>
+
+<div class="wx-share-modal">
+    <a class="modal-close" href="javascript:;"><i class="ri-close-circle-line"></i></a>
+    <p>扫一扫，分享到微信</p>
+    <div class="wx-qrcode">
+      <img src="//api.qrserver.com/v1/create-qr-code/?size=150x150&data=http://example.com/LayoutInflater.html" alt="微信分享二维码">
+    </div>
+</div>
+
+<div id="share-mask"></div>  
+    </footer>
+  </div>
+
+   
+   
+<!-- valine评论 -->
+<div id="vcomments-box">
+  <div id="vcomments"></div>
+</div>
+<script src="//cdn1.lncld.net/static/js/3.0.4/av-min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/valine@1.4.14/dist/Valine.min.js"></script>
+<script>
+  new Valine({
+    el: "#vcomments",
+    app_id: "",
+    app_key: "",
+    path: window.location.pathname,
+    avatar: "monsterid",
+    placeholder: "给我的文章加点评论吧~",
+    recordIP: true,
+  });
+  const infoEle = document.querySelector("#vcomments .info");
+  if (infoEle && infoEle.childNodes && infoEle.childNodes.length > 0) {
+    infoEle.childNodes.forEach(function (item) {
+      item.parentNode.removeChild(item);
+    });
+  }
+</script>
+<style>
+  #vcomments-box {
+    padding: 5px 30px;
+  }
+
+  @media screen and (max-width: 800px) {
+    #vcomments-box {
+      padding: 5px 0px;
+    }
+  }
+
+  #vcomments-box #vcomments {
+    background-color: #fff;
+  }
+
+  .v .vlist .vcard .vh {
+    padding-right: 20px;
+  }
+
+  .v .vlist .vcard {
+    padding-left: 10px;
+  }
+</style>
+
+ 
+    
+</article>
+
 </section>
       <footer class="footer">
   <div class="outer">

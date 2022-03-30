@@ -13,7 +13,7 @@
         name="viewport"
         content="width=device-width, initial-scale=1, maximum-scale=1"
       />
-      <title> Ethan&#39;s blog</title>
+      <title>LayoutInflater的使用说明 |  Ethan&#39;s blog</title>
   <meta name="generator" content="hexo-theme-ayer">
       
       <link rel="shortcut icon" href="/favicon.ico" />
@@ -54,109 +54,8 @@
     
       
     <main class="content on">
-      
-<section class="cover">
-    
-      
-      <a class="forkMe" href="https://github.com/Shen-Yu/hexo-theme-ayer"
-        target="_blank"><img width="149" height="149" src="/images/forkme.png"
-          class="attachment-full size-full" alt="Fork me on GitHub" data-recalc-dims="1"></a>
-    
-  <div class="cover-frame">
-    <div class="bg-box">
-      <img src="/images/cover1.jpg" alt="image frame" />
-    </div>
-    <div class="cover-inner text-center text-white">
-      <h1><a href="/">Ethan&#39;s blog</a></h1>
-      <div id="subtitle-box">
-        
-        <span id="subtitle"></span>
-        
-      </div>
-      <div>
-        
-      </div>
-    </div>
-  </div>
-  <div class="cover-learn-more">
-    <a href="javascript:void(0)" class="anchor"><i class="ri-arrow-down-line"></i></a>
-  </div>
-</section>
-
-
-
-<script src="https://cdn.jsdelivr.net/npm/typed.js@2.0.11/lib/typed.min.js"></script>
-
-
-<!-- Subtitle -->
-
-  <script>
-    try {
-      var typed = new Typed("#subtitle", {
-        strings: ['Ethan&#39;s Blog❤', 'WelcomeToMyBlog', '🐂光宝🐂# 最多支持三段文字'],
-        startDelay: 0,
-        typeSpeed: 200,
-        loop: true,
-        backSpeed: 100,
-        showCursor: true
-      });
-    } catch (err) {
-      console.log(err)
-    }
-  </script>
-  
-<div id="main">
-  <section class="outer">
-  
-  
-  
-
-<div class="notice" style="margin-top:50px">
-    <i class="ri-heart-fill"></i>
-    <div class="notice-content" id="broad"></div>
-</div>
-<script type="text/javascript">
-    fetch('https://v1.hitokoto.cn')
-        .then(response => response.json())
-        .then(data => {
-            document.getElementById("broad").innerHTML = data.hitokoto;
-        })
-        .catch(console.error)
-</script>
-
-<style>
-    .notice {
-        padding: 20px;
-        border: 1px dashed #e6e6e6;
-        color: #969696;
-        position: relative;
-        display: inline-block;
-        width: 100%;
-        background: #fbfbfb50;
-        border-radius: 10px;
-    }
-
-    .notice i {
-        float: left;
-        color: #999;
-        font-size: 16px;
-        padding-right: 10px;
-        vertical-align: middle;
-        margin-top: -2px;
-    }
-
-    .notice-content {
-        display: initial;
-        vertical-align: middle;
-    }
-</style>
-  
-  <article class="articles">
-    
-    
-    
-    
-    <article
+      <section class="outer">
+  <article
   id="post-LayoutInflater"
   class="article article-type-post"
   itemscope
@@ -167,10 +66,9 @@
     
     <header class="article-header">
        
-<h2 itemprop="name">
-  <a class="article-title" href="/2022/03/30/LayoutInflater/"
-    >LayoutInflater的使用说明</a> 
-</h2>
+<h1 class="article-title sea-center" style="border-left:0" itemprop="name">
+  LayoutInflater的使用说明
+</h1>
  
 
       
@@ -179,9 +77,34 @@
     <div class="article-meta">
       <a href="/2022/03/30/LayoutInflater/" class="article-date">
   <time datetime="2022-03-30T08:57:46.688Z" itemprop="datePublished">2022-03-30</time>
-</a>    
+</a>   
+<div class="word_count">
+    <span class="post-time">
+        <span class="post-meta-item-icon">
+            <i class="ri-quill-pen-line"></i>
+            <span class="post-meta-item-text"> Word count:</span>
+            <span class="post-count">1.1k</span>
+        </span>
+    </span>
+
+    <span class="post-time">
+        &nbsp; | &nbsp;
+        <span class="post-meta-item-icon">
+            <i class="ri-book-open-line"></i>
+            <span class="post-meta-item-text"> Reading time≈</span>
+            <span class="post-count">4 min</span>
+        </span>
+    </span>
+</div>
+ 
     </div>
       
+    <div class="tocbot"></div>
+
+
+
+
+  
     <div class="article-entry" itemprop="articleBody">
        
   <h1 id="LayoutInflater的使用"><a href="#LayoutInflater的使用" class="headerlink" title="LayoutInflater的使用"></a>LayoutInflater的使用</h1><h2 id="1、作用"><a href="#1、作用" class="headerlink" title="1、作用"></a>1、作用</h2><p>在实际开发会用到LayoutInflater这个类,它的作用类似于 findViewById()<br>LayoutInflater是用来找layout下xml布局文件，并且实例化，而findViewById()是找具体xml下的具体 widget控件(如:Button,TextView等)<br>对于一个没有被载入或者想要动态加载的界面，都需要使用LayoutInflater.inflate()来载入。</p>
@@ -226,160 +149,146 @@ public View getView(int position, View convertView, ViewGroup parent) &#123;
  
       <!-- reward -->
       
-    </div>
-    
-
-    <!-- copyright -->
-    
-    <footer class="article-footer">
-       
-    </footer>
-  </div>
-
-    
- 
-    
-</article>
-
-    
-    <article
-  id="post-adapterPosition=-1"
-  class="article article-type-post"
-  itemscope
-  itemprop="blogPost"
-  data-scroll-reveal
->
-  <div class="article-inner">
-    
-    <header class="article-header">
-       
-<h2 itemprop="name">
-  <a class="article-title" href="/2022/03/26/adapterPosition=-1/"
-    >dapterPosition总是返回-1</a> 
-</h2>
- 
-
-      
-    </header>
-     
-    <div class="article-meta">
-      <a href="/2022/03/26/adapterPosition=-1/" class="article-date">
-  <time datetime="2022-03-26T01:01:09.000Z" itemprop="datePublished">2022-03-26</time>
-</a>    
-    </div>
-      
-    <div class="article-entry" itemprop="articleBody">
-       
-  <h3 id="adapterPosition总是返回-1"><a href="#adapterPosition总是返回-1" class="headerlink" title="adapterPosition总是返回-1"></a>adapterPosition总是返回-1</h3><pre><code>Process: com.example.recyclerviewtest, PID: 14661
-java.lang.ArrayIndexOutOfBoundsException: length=22; index=-1
-
-看到这就知道是数组越界了，再看我的代码部分
-
-override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder &#123;
-    val view = LayoutInflater.from(parent.context).inflate(R.layout.fruit_item, parent, false)
-    val viewHolder = ViewHolder(view)
-    viewHolder.itemView.setOnClickListener &#123;
-        val position = viewHolder.adapterPosition
-        val fruit = fruitList[position]
-        Toast.makeText(parent.context,&quot;you clicked view $&#123;fruit.name&#125;&quot;,Toast.LENGTH_SHORT).show()
-    &#125;
-    Log.d(TAG,viewHolder.toString()+&quot;firstCreated&quot;)
-    return ViewHolder((view))
-&#125;
-</code></pre>
-<p>很明显是一下这两行引起报错</p>
-<pre><code>val position = viewHolder.adapterPosition
-val fruit = fruitList[position]     
-</code></pre>
-<p>但真正的原因其实是这行<br>    <code>return ViewHolder((view))</code><br>我原本是想返回刚才设置监听的那个viewHolder，结果这里打错了，返回的是一个新的ViewHolder。</p>
-<p>于是我就去网上搜，为什么adapterPosition返回-1<br>找到的99%的文章都是说因为在刷新的时候，数据绑定和实际视图显示是存在16ms的误差，所有有极小概率会导致这种现象。<br>viewHolder在还没有绑定数据的时候，position就是-1。</p>
-<p>为了测试，我们可以打两个logcat来看<br>在onCreatedViewHolder中加上这行<br><code>Log.d(TAG,viewHolder.toString()+&quot;waitingForBounding&quot;)</code></p>
-<p>onBindViewHolder中加上这行<br><code>Log.d(TAG,holder.toString()+&quot;hasBounded&quot;)</code></p>
-<p>结果是：</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">D/FruitAdapter: ViewHolder&#123;291904 position=-1 id=-1, oldPos=-1, pLpos:-1 unbound no parent&#125;waitingForBounding</span><br><span class="line">D/FruitAdapter: ViewHolder&#123;4370eed position=0 id=-1, oldPos=-1, pLpos:-1 no parent&#125;</span><br><span class="line">hasBounded</span><br><span class="line">D/FruitAdapter: ViewHolder&#123;965c7b3 position=-1 id=-1, oldPos=-1, pLpos:-1 unbound no parent&#125;waitingForBounding</span><br><span class="line">D/FruitAdapter: ViewHolder&#123;aa0c170 position=1 id=-1, oldPos=-1, pLpos:-1 no parent&#125;</span><br><span class="line">hasBounded</span><br><span class="line">...</span><br></pre></td></tr></table></figure>
-<p>结果证明，还没有绑定的position都是-1<br>而之前那个设置监听的ViewHolder并没有绑定数据，所以position = -1</p>
-<p>所以每次点击item的时候，就会报错。</p>
-<p>有意思的是，用打Log的方法，我们也可以验证ViewHolder的复用</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">2022-03-26 08:52:52.345 24123-24123/com.example.recyclerviewtest D/FruitAdapter: ViewHolder&#123;291904 position=-1 id=-1, oldPos=-1, pLpos:-1 unbound no parent&#125;waitingForBounding</span><br><span class="line">2022-03-26 08:52:52.346 24123-24123/com.example.recyclerviewtest D/FruitAdapter: ViewHolder&#123;291904 position=0 id=-1, oldPos=-1, pLpos:-1 no parent&#125;hasBounded</span><br><span class="line">2022-03-26 08:52:56.670 24123-24123/com.example.recyclerviewtest D/FruitAdapter: ViewHolder&#123;291904 position=0 id=-1, oldPos=-1, pLpos:-1&#125;CLICKDDDDDD</span><br><span class="line">2022-03-26 08:52:58.999 24123-24123/com.example.recyclerviewtest D/FruitAdapter: ViewHolder&#123;291904 position=18 id=-1, oldPos=-1, pLpos:-1 no parent&#125;hasBounded</span><br><span class="line">2022-03-26 08:52:59.508 24123-24123/com.example.recyclerviewtest D/FruitAdapter: ViewHolder&#123;291904 position=42 id=-1, oldPos=-1, pLpos:-1 no parent&#125;hasBounded</span><br></pre></td></tr></table></figure>
-<p>同一个ViewHolder绑定了三次数据，出现在三个position上<br>这里的291904 ViewHolder是一开始加载出来的最左上角的ViewHolder，但是我滑到最下面，再滑回去点击最左上角那个，发现此时已经不是它了。</p>
-<p>我还有疑问：<br>为什么我点击某一个item的时候，触发的是设置了监听的viewHolder，而不是绑定了数据的呢?还是都点击了？</p>
-<p>于是我又把绑定数据的VH设置了监听，结果证明，没有绑定数据的VH监听失效了，所以是只触发了后绑定的监听。<br>所以我们可以得出结论，同一个item是可以有两个ViewHolder的。<br>正如上面那样，一个用来设置监听，一个用来绑定数据，但是没有绑定数据的VH，不知道自己position,position=-1.</p>
-<p>总结：<br>1、设置监听到onBindViewHolder里面去设置。<br>2、没有绑定的VH的position=-1<br>3、两个ViewHolder可以占用屏幕同一块区域</p>
- 
-      <!-- reward -->
+      <div id="reword-out">
+        <div id="reward-btn">
+          Donate
+        </div>
+      </div>
       
     </div>
     
 
     <!-- copyright -->
     
-    <footer class="article-footer">
-       
-  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Android/" rel="tag">Android</a></li></ul>
-
-    </footer>
-  </div>
-
-    
- 
-    
-</article>
-
-    
-    <article
-  id="post-test"
-  class="article article-type-post"
-  itemscope
-  itemprop="blogPost"
-  data-scroll-reveal
->
-  <div class="article-inner">
-    
-    <header class="article-header">
-       
-<h2 itemprop="name">
-  <a class="article-title" href="/2022/01/27/test/"
-    >test</a> 
-</h2>
- 
-
-      
-    </header>
-     
-    <div class="article-meta">
-      <a href="/2022/01/27/test/" class="article-date">
-  <time datetime="2022-01-26T17:01:09.000Z" itemprop="datePublished">2022-01-27</time>
-</a>    
+    <div class="declare">
+      <ul class="post-copyright">
+        <li>
+          <i class="ri-copyright-line"></i>
+          <strong>Copyright： </strong>
+          
+          Copyright is owned by the author. For commercial reprints, please contact the author for authorization. For non-commercial reprints, please indicate the source.
+          
+        </li>
+      </ul>
     </div>
-      
-    <div class="article-entry" itemprop="articleBody">
-       
-   
-      <!-- reward -->
-      
-    </div>
-    
-
-    <!-- copyright -->
     
     <footer class="article-footer">
        
-    </footer>
-  </div>
-
-    
- 
-    
-</article>
-
-    
-  </article>
-  
-
-  
-</section>
+<div class="share-btn">
+      <span class="share-sns share-outer">
+        <i class="ri-share-forward-line"></i>
+        分享
+      </span>
+      <div class="share-wrap">
+        <i class="arrow"></i>
+        <div class="share-icons">
+          
+          <a class="weibo share-sns" href="javascript:;" data-type="weibo">
+            <i class="ri-weibo-fill"></i>
+          </a>
+          <a class="weixin share-sns wxFab" href="javascript:;" data-type="weixin">
+            <i class="ri-wechat-fill"></i>
+          </a>
+          <a class="qq share-sns" href="javascript:;" data-type="qq">
+            <i class="ri-qq-fill"></i>
+          </a>
+          <a class="douban share-sns" href="javascript:;" data-type="douban">
+            <i class="ri-douban-line"></i>
+          </a>
+          <!-- <a class="qzone share-sns" href="javascript:;" data-type="qzone">
+            <i class="icon icon-qzone"></i>
+          </a> -->
+          
+          <a class="facebook share-sns" href="javascript:;" data-type="facebook">
+            <i class="ri-facebook-circle-fill"></i>
+          </a>
+          <a class="twitter share-sns" href="javascript:;" data-type="twitter">
+            <i class="ri-twitter-fill"></i>
+          </a>
+          <a class="google share-sns" href="javascript:;" data-type="google">
+            <i class="ri-google-fill"></i>
+          </a>
+        </div>
+      </div>
 </div>
 
+<div class="wx-share-modal">
+    <a class="modal-close" href="javascript:;"><i class="ri-close-circle-line"></i></a>
+    <p>扫一扫，分享到微信</p>
+    <div class="wx-qrcode">
+      <img src="//api.qrserver.com/v1/create-qr-code/?size=150x150&data=http://example.com/2022/03/30/LayoutInflater/" alt="微信分享二维码">
+    </div>
+</div>
+
+<div id="share-mask"></div>  
+    </footer>
+  </div>
+
+   
+  <nav class="article-nav">
+    
+    
+      <a href="/2022/03/26/adapterPosition=-1/" class="article-nav-link">
+        <strong class="article-nav-caption">下一篇</strong>
+        <div class="article-nav-title">dapterPosition总是返回-1</div>
+      </a>
+    
+  </nav>
+
+   
+<!-- valine评论 -->
+<div id="vcomments-box">
+  <div id="vcomments"></div>
+</div>
+<script src="//cdn1.lncld.net/static/js/3.0.4/av-min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/valine@1.4.14/dist/Valine.min.js"></script>
+<script>
+  new Valine({
+    el: "#vcomments",
+    app_id: "",
+    app_key: "",
+    path: window.location.pathname,
+    avatar: "monsterid",
+    placeholder: "给我的文章加点评论吧~",
+    recordIP: true,
+  });
+  const infoEle = document.querySelector("#vcomments .info");
+  if (infoEle && infoEle.childNodes && infoEle.childNodes.length > 0) {
+    infoEle.childNodes.forEach(function (item) {
+      item.parentNode.removeChild(item);
+    });
+  }
+</script>
+<style>
+  #vcomments-box {
+    padding: 5px 30px;
+  }
+
+  @media screen and (max-width: 800px) {
+    #vcomments-box {
+      padding: 5px 0px;
+    }
+  }
+
+  #vcomments-box #vcomments {
+    background-color: #fff;
+  }
+
+  .v .vlist .vcard .vh {
+    padding-right: 20px;
+  }
+
+  .v .vlist .vcard {
+    padding-left: 10px;
+  }
+</style>
+
+ 
+   
+     
+</article>
+
+</section>
       <footer class="footer">
   <div class="outer">
     <ul>
@@ -527,6 +436,22 @@ val fruit = fruitList[position]
 <script src="/js/lazyload.min.js"></script>
 
 <!-- Tocbot -->
+ 
+<script src="/js/tocbot.min.js"></script>
+
+<script>
+  tocbot.init({
+    tocSelector: ".tocbot",
+    contentSelector: ".article-entry",
+    headingSelector: "h1, h2, h3, h4, h5, h6",
+    hasInnerContainers: true,
+    scrollSmooth: true,
+    scrollContainer: "main",
+    positionFixedSelector: ".tocbot",
+    positionFixedClass: "is-position-fixed",
+    fixedSidebarOffset: "auto",
+  });
+</script>
 
 <script src="https://cdn.jsdelivr.net/npm/jquery-modal@0.9.2/jquery.modal.min.js"></script>
 <link
